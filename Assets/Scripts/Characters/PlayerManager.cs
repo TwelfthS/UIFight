@@ -8,9 +8,15 @@ public class PlayerManager : CharacterManager
         PlayerEventManager.Instance.itemEquipStatusChanged += OnEquipmentChanged;
         PlayerEventManager.Instance.itemUsed += OnItemUsed;
     }
-    public override void TakeDamage(int damageTaken) {
-        damageTaken = Mathf.Max(damageTaken - (_equippedHead ? _equippedHead.defense : 0) - (_equippedTorso ? _equippedTorso.defense : 0), 0);
-        base.TakeDamage(damageTaken);
+    public override void TakeDamage(int damageTaken, BodyPart bodyPart) {
+        int damageReduced = 0;
+        if (_equippedHead != null && bodyPart == BodyPart.Head) {
+            damageReduced = _equippedHead.defense;
+        } else if (_equippedTorso != null && bodyPart == BodyPart.Torso) {
+            damageReduced = _equippedTorso.defense;
+        }
+        damageTaken = Mathf.Max(damageTaken - damageReduced, 0);
+        base.TakeDamage(damageTaken, bodyPart);
     }
     private void OnEquipmentChanged(Item item, bool status) {
         if (item is Apparel apparelItem) {

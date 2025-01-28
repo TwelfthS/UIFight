@@ -10,6 +10,7 @@ public class WeaponScript : MonoBehaviour
     private int autoAmmoUsage = 3;
     private PlayerManager player;
     private WeaponType activeWeapon = WeaponType.Gun;
+    private BodyPart bodyPartToAttack = BodyPart.Torso;
     void Awake() {
         player = GetComponent<PlayerManager>();
     }
@@ -20,12 +21,12 @@ public class WeaponScript : MonoBehaviour
         switch (activeWeapon) {
             case WeaponType.Gun:
                 if (CheckForAmmo(AmmoType.Gun)) {
-                    player.DealDamage(gunDamage);
+                    player.DealDamage(gunDamage, bodyPartToAttack);
                 }
                 break;
             case WeaponType.Rifle:
                 if (CheckForAmmo(AmmoType.Auto)) {
-                    player.DealDamage(rifleDamage);
+                    player.DealDamage(rifleDamage, bodyPartToAttack);
                 }
                 break;
             default:

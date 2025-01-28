@@ -20,13 +20,13 @@ public class CharacterManager : MonoBehaviour
         OnHPChanged += DeathCheck;
     }
 
-    public virtual void TakeDamage(int damageTaken) {
+    public virtual void TakeDamage(int damageTaken, BodyPart bodyPart) {
         HP = Mathf.Max(HP - damageTaken, 0);
     }
 
-    public virtual void DealDamage(int damage) {
+    public virtual void DealDamage(int damage, BodyPart bodyPart) {
         if (opponent != null) {
-            opponent.TakeDamage(damage);            
+            opponent.TakeDamage(damage, bodyPart);            
         }
     }
 
