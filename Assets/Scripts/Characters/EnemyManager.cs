@@ -7,4 +7,9 @@ public class EnemyManager : CharacterManager
         base.TakeDamage(damageTaken);
         base.DealDamage(enemyDamage);
     }
+
+    protected override void OnDeath() {
+        LootManager.Instance.SpawnRandomLoot();
+        base.OnDeath();
+    }
 }

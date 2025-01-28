@@ -25,4 +25,22 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    public InventorySlot GetFirstFreeSlot() {
+        foreach (InventorySlot slot in slots) {
+            if (slot.content == null) {
+                return slot;
+            }
+        }
+        return null;
+    }
+
+    public ItemController FindStackWithItem(Item item) {
+        foreach (InventorySlot slot in slots) {
+            if (slot.content != null && slot.content.item == item) {
+                return slot.content;
+            }
+        }
+        return null;
+    }
+
 }

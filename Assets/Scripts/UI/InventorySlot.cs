@@ -21,13 +21,14 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         }
     }
 
-    protected virtual void OnItemLeft() {
+    public virtual void OnItemLeft() {
         content = null;
     }
 
     public void SetContent(ItemController itemController) {
         itemController.parentSlot.OnItemLeft();
         itemController.parentSlot = this;
+        itemController.MoveToParent();
         content = itemController;
     }
 }

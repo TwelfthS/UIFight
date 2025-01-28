@@ -2,19 +2,15 @@ using UnityEngine;
 
 public class PlayerManager : CharacterManager
 {
-    private Apparel equippedHead;
-    private Apparel equippedTorso;
+    private Apparel _equippedHead;
+    private Apparel _equippedTorso;
     void Start() {
         PlayerEventManager.Instance.itemEquipStatusChanged += OnEquipmentChanged;
         PlayerEventManager.Instance.itemUsed += OnItemUsed;
     }
     public override void TakeDamage(int damageTaken) {
-        damageTaken = Mathf.Max(damageTaken - (equippedHead ? equippedHead.defense : 0) - (equippedTorso ? equippedTorso.defense : 0), 0);
+        damageTaken = Mathf.Max(damageTaken - (_equippedHead ? _equippedHead.defense : 0) - (_equippedTorso ? _equippedTorso.defense : 0), 0);
         base.TakeDamage(damageTaken);
-    }
-
-    public override void DealDamage(int damage) {
-        opponent.TakeDamage(damage);
     }
     private void OnEquipmentChanged(Item item, bool status) {
         if (item is Apparel apparelItem) {
@@ -27,22 +23,27 @@ public class PlayerManager : CharacterManager
     }
     private void EquipArmor(Apparel armor) {
         if (armor.bodyPart == BodyPart.Head) {
-            equippedHead = armor;
+            _equippedHead = armor;
         } else if (armor.bodyPart == BodyPart.Torso) {
-            equippedTorso = armor;
+            _equippedTorso = armor;
         }
     }
     private void UnequipArmor(Apparel armor) {
-        if (equippedHead == armor) {
-            equippedHead = null;
-        } else if (equippedTorso == armor) {
-            equippedTorso = null;
+        if (_equippedHead == armor) {
+            _equippedHead = null;
+        } else if (_equippedTorso == armor) {
+            _equippedTorso = null;
         }
     }
     private void OnItemUsed(Item item) {
         if (item is Medical medicalItem) {
-            HP = Mathf.Min(HP + medicalItem.healing, maxHp);
+            HP = Mathf.Min(HP + medicalItem.healing, _maxHp);
         }
+    }
+
+    protected override void OnDeath() {
+        Debug.Log("Game over");
+        base.OnDeath();
     }
 
     void OnDestroy() {

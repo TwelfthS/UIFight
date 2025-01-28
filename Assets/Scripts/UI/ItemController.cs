@@ -25,14 +25,14 @@ public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     }
 
     void Start() {
-        InitializeItem(item);
+        InitializeItem(item, Count);
     }
 
-    public void InitializeItem(Item newItem) {
+    public void InitializeItem(Item newItem, int count) {
         item = newItem;
         image.sprite = item.icon;
         itemName.text = item.itemName;
-        UpdateCountText();
+        Count = count;
     }
 
     public void OnBeginDrag(PointerEventData eventData) {
@@ -45,8 +45,12 @@ public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     }
 
     public void OnEndDrag(PointerEventData eventData) {
-        transform.SetParent(parentSlot.transform);
+        MoveToParent();
         image.raycastTarget = true;
+    }
+
+    public void MoveToParent() {
+        transform.SetParent(parentSlot.transform);
     }
 
     public void UseItem() {
@@ -62,7 +66,9 @@ public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
     public void IncreaseCount(int addedCount) {
         if (Count + addedCount > item.maxStack) {
-            // create new item
+            int overflow = Count + addedCount - item.maxStack;
+            Count += addedCount - overflow;
+            CreateNewStack(overflow);
         } else {
             Count += addedCount;
         }
@@ -75,12 +81,26 @@ public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         }
     }
 
+    private void CreateNewStack(int count) {
+        InventorySlot freeSlot = InventoryManager.Instance.GetFirstFreeSlot();
+        if (freeSlot != null) {
+            ItemController newStack = Instantiate(this.gameObject, freeSlot.transform).GetComponent<ItemController>();
+            newStack.InitializeItem(this.item, count);
+        }
+    }
+
     private void UpdateCountText() {
-        countText.text = Count.ToString();
+        if (Count > 1) {
+            countText.text = Count.ToString();            
+        } else {
+            countText.text = "";
+        }
+ 
     }
 
     void OnDestroy() {
         if (item is Apparel) {
+            parentSlot.OnItemLeft();
             PlayerEventManager.Instance.InvokeItemEquipStatusChanged(item, false);
         }
     }

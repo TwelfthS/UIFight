@@ -3,7 +3,6 @@ using UnityEngine;
 public class ArmorManager : MonoBehaviour
 {
     public static ArmorManager Instance { get; private set; }
-    public int currentDefense;
     [SerializeField] public ArmorSlot headSlot;
     [SerializeField] public ArmorSlot torsoSlot;
     void Awake() {
