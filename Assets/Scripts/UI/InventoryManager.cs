@@ -5,9 +5,8 @@ using System.Collections.Generic;
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set;}
-    public List<Item> items = new List<Item>();
-    public Transform inventory;
-    public GameObject inventoryItem;
+    public List<InventorySlot> slots {get; private set;} = new List<InventorySlot>();
+    [SerializeField] private Transform inventory;    
 
     void Awake() {
         if (Instance == null) {
@@ -17,13 +16,13 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void Add(Item item) {
-        items.Add(item);
+    void Start() {
+        foreach (Transform child in inventory) {
+            InventorySlot slot = child.gameObject.GetComponent<InventorySlot>();
+            if (slot) {
+                slots.Add(slot);
+            }
+        }
     }
-
-    void Remove(Item item) {
-        items.Remove(item);
-    }
-
 
 }

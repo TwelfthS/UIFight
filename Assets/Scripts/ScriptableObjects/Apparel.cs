@@ -5,8 +5,4 @@ public class Apparel : Item
 {
     public BodyPart bodyPart;
     public int defense;
-
-    public enum BodyPart {
-        Head, Torso
-    }
 }

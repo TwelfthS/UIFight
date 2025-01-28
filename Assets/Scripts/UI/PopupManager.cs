@@ -3,7 +3,7 @@ using UnityEngine;
 public class PopupManager : MonoBehaviour
 {
     public static PopupManager Instance { get; private set;}
-    public GameObject popup;
+    [SerializeField] private Popup _popup;
 
     void Awake() {
         if (Instance == null) {
@@ -13,10 +13,11 @@ public class PopupManager : MonoBehaviour
         }
     }
 
-    public void OpenPopup() {
-        popup.SetActive(true);
+    public void OpenPopup(ItemController owner) {
+        _popup.gameObject.SetActive(true);
+        _popup.InitPopup(owner);
     }
     public void ClosePopup() {
-        popup.SetActive(false);
+        _popup.gameObject.SetActive(false);
     }
 }

@@ -2,45 +2,50 @@ using UnityEngine;
 
 public class PlayerManager : CharacterManager
 {
-    private int totalDefense;
-    private int equippedWeaponDamage;
-
+    private Apparel equippedHead;
+    private Apparel equippedTorso;
+    void Start() {
+        PlayerEventManager.Instance.itemEquipStatusChanged += OnEquipmentChanged;
+        PlayerEventManager.Instance.itemUsed += OnItemUsed;
+    }
     public override void TakeDamage(int damageTaken) {
-        damageTaken = Mathf.Max(damageTaken - totalDefense, 0);
+        damageTaken = Mathf.Max(damageTaken - (equippedHead ? equippedHead.defense : 0) - (equippedTorso ? equippedTorso.defense : 0), 0);
         base.TakeDamage(damageTaken);
     }
 
     public override void DealDamage(int damage) {
-        opponent.TakeDamage(damage + equippedWeaponDamage);
+        opponent.TakeDamage(damage);
     }
     private void OnEquipmentChanged(Item item, bool status) {
         if (item is Apparel apparelItem) {
             if (status) {
-                EquipArmor(apparelItem.defense);
+                EquipArmor(apparelItem);
             } else {
-                UnequipArmor(apparelItem.defense);
+                UnequipArmor(apparelItem);
             }
         }
     }
-    private void EquipWeapon(int weaponDamage) {
-        equippedWeaponDamage = weaponDamage;
+    private void EquipArmor(Apparel armor) {
+        if (armor.bodyPart == BodyPart.Head) {
+            equippedHead = armor;
+        } else if (armor.bodyPart == BodyPart.Torso) {
+            equippedTorso = armor;
+        }
     }
-    private void EquipArmor(int armorDefense) {
-        totalDefense += armorDefense;
-    }
-    private void UnequipArmor(int armorDefense) {
-        totalDefense = Mathf.Max(totalDefense - armorDefense, 0);
+    private void UnequipArmor(Apparel armor) {
+        if (equippedHead == armor) {
+            equippedHead = null;
+        } else if (equippedTorso == armor) {
+            equippedTorso = null;
+        }
     }
     private void OnItemUsed(Item item) {
         if (item is Medical medicalItem) {
             HP = Mathf.Min(HP + medicalItem.healing, maxHp);
         }
     }
-    void OnEnable() {
-        PlayerEventManager.Instance.itemEquipStatusChanged += OnEquipmentChanged;
-        PlayerEventManager.Instance.itemUsed += OnItemUsed;
-    }
-    void OnDisable() {
+
+    void OnDestroy() {
         PlayerEventManager.Instance.itemEquipStatusChanged -= OnEquipmentChanged;
         PlayerEventManager.Instance.itemUsed -= OnItemUsed;
     }
