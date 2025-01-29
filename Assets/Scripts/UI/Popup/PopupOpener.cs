@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class PopupOpener : MonoBehaviour
 {
-    private ItemController currentItem;
+    private ItemController _currentItem;
     void Awake() {
-        currentItem = GetComponent<ItemController>();
+        _currentItem = GetComponent<ItemController>();
     }
     public void OpenPopup() {
-        PopupManager.Instance.OpenPopup(currentItem);
+        PopupManager.Instance.OpenPopup(_currentItem);
     }
     public void ClosePopup() {
         PopupManager.Instance.ClosePopup();

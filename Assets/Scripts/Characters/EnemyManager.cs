@@ -3,21 +3,21 @@ using UnityEngine;
 public class EnemyManager : CharacterManager
 {
     [SerializeField] private int enemyDamage;
-    private int currentIndex = 0;
-    private BodyPart[] possibleTargets = { BodyPart.Head, BodyPart.Torso };
+    private int currentTargetIndex = 0;
+    [SerializeField] private BodyPart[] possibleTargets = { BodyPart.Head, BodyPart.Torso };
     public override void TakeDamage(int damageTaken, BodyPart bodyPart) {
         base.TakeDamage(damageTaken, bodyPart);
-        base.DealDamage(enemyDamage, possibleTargets[currentIndex]);
+        base.DealDamage(enemyDamage, possibleTargets[currentTargetIndex]);
         SwitchTarget();
     }
 
     private void SwitchTarget()
     {
-        currentIndex = currentIndex + 1 >= possibleTargets.Length ? 0 : currentIndex + 1;
+        currentTargetIndex = currentTargetIndex + 1 >= possibleTargets.Length ? 0 : currentTargetIndex + 1;
     }
 
     protected override void OnDeath() {
         LootManager.Instance.SpawnRandomLoot();
-        base.OnDeath();
+        HP = _maxHp;
     }
 }

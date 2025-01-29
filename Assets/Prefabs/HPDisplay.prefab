@@ -399,9 +399,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 983d51cd7a1fdb043acc99ec66e45c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: {fileID: 0}
-  healthBarImage: {fileID: 2985501988348687845}
-  hpText: {fileID: 5836946599742884320}
+  _owner: {fileID: 0}
+  _healthBarImage: {fileID: 2985501988348687845}
+  _hpText: {fileID: 5836946599742884320}
 --- !u!1 &7482226392786483980
 GameObject:
   m_ObjectHideFlags: 0

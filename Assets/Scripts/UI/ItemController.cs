@@ -3,12 +3,15 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    public Item item;
-    public Image image;
+    [field:SerializeField] public Item item { get; private set; }
     [HideInInspector] public InventorySlot parentSlot;
+    [HideInInspector] public Transform parentAfterDrag;
+    public event Action goneFromSlot;
+    [SerializeField] private Image _image;
     [SerializeField] private int _count = 1;
     public int Count {
         get { return _count; }
@@ -21,7 +24,9 @@ public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     [SerializeField] private TMP_Text itemName;
 
     void Awake() {
-        parentSlot = transform.parent.GetComponent<InventorySlot>();
+        // if (transform.parent != null) {
+        //     parentSlot = transform.parent.GetComponent<InventorySlot>();
+        // }
     }
 
     void Start() {
@@ -30,14 +35,15 @@ public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
     public void InitializeItem(Item newItem, int count) {
         item = newItem;
-        image.sprite = item.icon;
+        _image.sprite = item.icon;
         itemName.text = item.itemName;
         Count = count;
     }
 
     public void OnBeginDrag(PointerEventData eventData) {
+        parentAfterDrag = transform.parent;
         transform.SetParent(transform.root);
-        image.raycastTarget = false;
+        _image.raycastTarget = false;
     }
 
     public void OnDrag(PointerEventData eventData) {
@@ -45,18 +51,19 @@ public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     }
 
     public void OnEndDrag(PointerEventData eventData) {
-        MoveToParent();
-        image.raycastTarget = true;
+        transform.SetParent(parentAfterDrag);
+        _image.raycastTarget = true;
     }
 
-    public void MoveToParent() {
-        transform.SetParent(parentSlot.transform);
-    }
+    // public void MoveToParent() {
+    //     // transform.SetParent(parentSlot.transform);
+        
+    // }
 
     public void UseItem() {
         if (item is Medical) {
             PlayerEventManager.Instance.InvokeItemUsed(item);
-            ReduceCount(1);            
+            ReduceCount(1);
         } else if (item is Ammo) {
             IncreaseCount(1);
         } else if (item is Apparel) {
@@ -81,11 +88,14 @@ public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         }
     }
 
+    public void InvokeGoneFromSlot() {
+        goneFromSlot?.Invoke();
+    }
+
     private void CreateNewStack(int count) {
         InventorySlot freeSlot = InventoryManager.Instance.GetFirstFreeSlot();
         if (freeSlot != null) {
-            ItemController newStack = Instantiate(this.gameObject, freeSlot.transform).GetComponent<ItemController>();
-            newStack.InitializeItem(this.item, count);
+            GameManager.Instance.CreateItem(item, count, freeSlot.transform);
         }
     }
 
@@ -95,13 +105,11 @@ public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         } else {
             countText.text = "";
         }
- 
     }
 
     void OnDestroy() {
-        if (item is Apparel) {
-            parentSlot.OnItemLeft();
-            PlayerEventManager.Instance.InvokeItemEquipStatusChanged(item, false);
-        }
+        goneFromSlot?.Invoke();
+        // parentSlot.OnItemLeft();
+            // PlayerEventManager.Instance.InvokeItemEquipStatusChanged(item, false);
     }
 }

@@ -4,20 +4,20 @@ using System;
 public class CharacterManager : MonoBehaviour
 {
     [SerializeField] protected CharacterManager opponent;
-    public event Action<int, int> OnHPChanged;
+    public event Action<int, int> HPChanged;
     private int _hp = 100;
     protected int HP {
         get { return _hp; }
         set {
             _hp = value;
-            OnHPChanged?.Invoke(_hp, _maxHp);
+            HPChanged?.Invoke(_hp, _maxHp);
         }
     }
     protected int _maxHp = 100;
 
     void Awake() {
         HP = _maxHp;
-        OnHPChanged += DeathCheck;
+        HPChanged += DeathCheck;
     }
 
     public virtual void TakeDamage(int damageTaken, BodyPart bodyPart) {
@@ -28,6 +28,14 @@ public class CharacterManager : MonoBehaviour
         if (opponent != null) {
             opponent.TakeDamage(damage, bodyPart);            
         }
+    }
+
+    public int GetHP() {
+        return HP;
+    }
+
+    public void LoadHP(int hp) {
+        HP = hp;
     }
 
     private void DeathCheck(int newHp, int maxHp) {

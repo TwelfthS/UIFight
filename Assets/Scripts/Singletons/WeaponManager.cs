@@ -1,20 +1,26 @@
 using UnityEngine;
 using System;
 
-public class WeaponScript : MonoBehaviour
+public class WeaponManager : MonoBehaviour
 {
-    public Action<WeaponType> weaponChanged;
-    private int gunDamage = 5;
-    private int rifleDamage = 9;
+    public static WeaponManager Instance { get; private set;}
+    public event Action<WeaponType> weaponChanged;
+    [SerializeField] private int gunDamage = 5;
+    [SerializeField] private int rifleDamage = 9;
     private int gunAmmoUsage = 1;
     private int autoAmmoUsage = 3;
     private PlayerManager player;
     private WeaponType activeWeapon = WeaponType.Gun;
     private BodyPart bodyPartToAttack = BodyPart.Torso;
     void Awake() {
-        player = GetComponent<PlayerManager>();
+        if (Instance == null) {
+            Instance = this;
+        } else {
+            Destroy(gameObject);
+        }
     }
     void Start() {
+        player = GameManager.Instance.player;
         weaponChanged?.Invoke(activeWeapon);
     }
     public void Shoot() {

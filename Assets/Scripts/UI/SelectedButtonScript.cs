@@ -3,20 +3,19 @@ using UnityEngine.UI;
 
 public class SelectedButtonScript : MonoBehaviour
 {
-    [SerializeField] private Button button1;
-    [SerializeField] private Button button2;
-    [SerializeField] private Color highlightedColor = Color.green;
-    [SerializeField] private Color normalColor = Color.white;
-    [SerializeField] private WeaponScript weaponScript;
+    [SerializeField] private Button _button1;
+    [SerializeField] private Button _button2;
+    [SerializeField] private Color _highlightedColor = Color.green;
+    [SerializeField] private Color _normalColor = Color.white;
 
     private void OnWeaponChanged(WeaponType weaponType)
     {
         if (weaponType == WeaponType.Gun) {
-            SetButtonHighlight(button2, false);
-            SetButtonHighlight(button1, true);
+            SetButtonHighlight(_button2, false);
+            SetButtonHighlight(_button1, true);
         } else if (weaponType == WeaponType.Rifle) {
-            SetButtonHighlight(button1, false);
-            SetButtonHighlight(button2, true);
+            SetButtonHighlight(_button1, false);
+            SetButtonHighlight(_button2, true);
         }
     }
 
@@ -25,15 +24,15 @@ public class SelectedButtonScript : MonoBehaviour
         Image buttonImage = button.GetComponent<Image>();
         if (buttonImage != null)
         {
-            buttonImage.color = highlight ? highlightedColor : normalColor;
+            buttonImage.color = highlight ? _highlightedColor : _normalColor;
         }
     }
 
     void OnEnable() {
-        weaponScript.weaponChanged += OnWeaponChanged;
+        WeaponManager.Instance.weaponChanged += OnWeaponChanged;
     }    
 
     void OnDisable() {
-        weaponScript.weaponChanged -= OnWeaponChanged;
+        WeaponManager.Instance.weaponChanged -= OnWeaponChanged;
     }
 }

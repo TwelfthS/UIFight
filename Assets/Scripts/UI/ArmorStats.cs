@@ -8,21 +8,21 @@ public class ArmorStats : MonoBehaviour
     void Start() {
         ArmorManager.Instance.headSlot.contentChanged += UpdateStatsText;
         ArmorManager.Instance.torsoSlot.contentChanged += UpdateStatsText;
+        UpdateStatsText(BodyPart.Head);
+        UpdateStatsText(BodyPart.Torso);
     }
-    private void UpdateStatsText(Apparel apparel, BodyPart bodyPart) {
+    private void UpdateStatsText(BodyPart bodyPart) {
+        Apparel apparel = ArmorManager.Instance.GetApparel(bodyPart);
+        GetTextByBodyPart(bodyPart).text = apparel == null ? "0" : apparel.defense.ToString();
+    }
+    private TMP_Text GetTextByBodyPart(BodyPart bodyPart) {
+        TMP_Text result = null;
         if (bodyPart == BodyPart.Head) {
-            if (apparel == null) {
-                headTotal.text = "0";
-            } else {
-                headTotal.text = apparel.defense.ToString();
-            }
+            result = headTotal;
         } else if (bodyPart == BodyPart.Torso) {
-            if (apparel == null) {
-                torsoTotal.text = "0";
-            } else {
-                torsoTotal.text = apparel.defense.ToString();
-            }
+            result = torsoTotal;
         }
+        return result;
     }
     void OnDestroy() {
         ArmorManager.Instance.headSlot.contentChanged -= UpdateStatsText;

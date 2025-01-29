@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a2567df7c411714bb1b567f6f062e3d, type: 3}
   m_Name: Helmet
   m_EditorClassIdentifier: 
-  id: 0
+  id: 4
   itemName: "\u0428\u043B\u0435\u043C"
   icon: {fileID: 21300000, guid: 127279d577f25ac4ea17dae3782e5074, type: 3}
   weight: 1
