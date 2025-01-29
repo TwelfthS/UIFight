@@ -36,7 +36,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     public void CleanUp() {
         foreach (Transform child in transform) {
             if (child.gameObject.GetComponent<ItemController>() != null) {
-                if (content != null) content.goneFromSlot -= OnItemLeft;
+                if (content) content.goneFromSlot -= OnItemLeft;
                 content = null;
                 Destroy(child.gameObject);
             }
@@ -60,5 +60,9 @@ public class InventorySlot : MonoBehaviour, IDropHandler
                 return;
             }
         }
+    }
+
+    void OnDestroy() {
+        if (content) content.goneFromSlot -= OnItemLeft;
     }
 }

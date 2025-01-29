@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     [field:SerializeField] public EnemyManager enemy { get; private set; }
     [SerializeField] private Item[] items;
     [SerializeField] private GameObject inventoryItemPrefab;
+    [SerializeField] private GameObject gameOverScreen;
+    private bool isGameOver = false;
 
     void Awake() {
         if (Instance == null) {
@@ -66,6 +68,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void GameOver() {
+        gameOverScreen.SetActive(true);
+        isGameOver = true;
+    }
+
     private GameData CollectData() {
         int playerHp = player.GetHP();
         int enemyHp = enemy.GetHP();
@@ -76,8 +83,10 @@ public class GameManager : MonoBehaviour
     }
 
     private void OnGameClosed() {
-        GameData savedData = CollectData();
-        SaveData(savedData);        
+        if (!isGameOver) {
+            GameData savedData = CollectData();
+            SaveData(savedData); 
+        }
     }
 
     void OnApplicationQuit()

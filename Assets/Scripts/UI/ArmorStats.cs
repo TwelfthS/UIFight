@@ -13,7 +13,11 @@ public class ArmorStats : MonoBehaviour
     }
     private void UpdateStatsText(BodyPart bodyPart) {
         Apparel apparel = ArmorManager.Instance.GetApparel(bodyPart);
-        GetTextByBodyPart(bodyPart).text = apparel == null ? "0" : apparel.defense.ToString();
+        TMP_Text textByBodyPart = GetTextByBodyPart(bodyPart);
+        if (textByBodyPart) {
+            textByBodyPart.text = apparel == null ? "0" : apparel.defense.ToString();
+        }
+        
     }
     private TMP_Text GetTextByBodyPart(BodyPart bodyPart) {
         TMP_Text result = null;

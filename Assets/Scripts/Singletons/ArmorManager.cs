@@ -19,12 +19,33 @@ public class ArmorManager : MonoBehaviour
 
     public void EquipArmor(ItemController itemController) {
         if (itemController.item is Apparel armor) {
-            if (armor.bodyPart == BodyPart.Head) {
-                headSlot.PutToSlot(itemController);
-            } else if (armor.bodyPart == BodyPart.Torso) {
-                torsoSlot.PutToSlot(itemController);
+            ArmorSlot slotByBodyPart = GetSlotByBodyPart(armor.bodyPart);
+            if (slotByBodyPart) {
+                slotByBodyPart.PutToSlot(itemController);
             }
         }
+    }
+
+    public void UnquipArmor(BodyPart bodyPart) {
+        ArmorSlot slotByBodyPart = GetSlotByBodyPart(bodyPart);
+        if (slotByBodyPart && slotByBodyPart.content) {
+            InventorySlot freeSlot = InventoryManager.Instance.GetFirstFreeSlot();
+            if (freeSlot) {
+                ItemController content = slotByBodyPart.content;
+                slotByBodyPart.content.InvokeGoneFromSlot();
+                freeSlot.SetContent(content);
+            }
+        }
+    }
+
+    public ArmorSlot GetSlotByBodyPart(BodyPart bodyPart) {
+        ArmorSlot result = null;
+        if (bodyPart == BodyPart.Head) {
+            result = headSlot;
+        } else if (bodyPart == BodyPart.Torso) {
+            result = torsoSlot;
+        }
+        return result;
     }
 
     public int GetDefense(BodyPart bodyPart) {
@@ -60,6 +81,15 @@ public class ArmorManager : MonoBehaviour
         foreach (ItemData item in itemData) {
             ItemController createdItem = GameManager.Instance.LoadItem(item);
             if (createdItem) EquipArmor(createdItem);
+        }
+    }
+
+    public bool IsEquipped(Apparel apparel) {
+        ArmorSlot slotByBodyPart = GetSlotByBodyPart(apparel.bodyPart);
+        if (slotByBodyPart && slotByBodyPart.content && slotByBodyPart.content.item is Apparel storedApparel && storedApparel == apparel) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

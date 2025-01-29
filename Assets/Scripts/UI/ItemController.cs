@@ -23,12 +23,6 @@ public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     [SerializeField] private TMP_Text countText;
     [SerializeField] private TMP_Text itemName;
 
-    void Awake() {
-        // if (transform.parent != null) {
-        //     parentSlot = transform.parent.GetComponent<InventorySlot>();
-        // }
-    }
-
     void Start() {
         InitializeItem(item, Count);
     }
@@ -55,19 +49,18 @@ public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         _image.raycastTarget = true;
     }
 
-    // public void MoveToParent() {
-    //     // transform.SetParent(parentSlot.transform);
-        
-    // }
-
     public void UseItem() {
         if (item is Medical) {
             PlayerEventManager.Instance.InvokeItemUsed(item);
             ReduceCount(1);
         } else if (item is Ammo) {
             IncreaseCount(1);
-        } else if (item is Apparel) {
-            ArmorManager.Instance.EquipArmor(this);
+        } else if (item is Apparel apparel) {
+            if (ArmorManager.Instance.IsEquipped(apparel)) {
+                ArmorManager.Instance.UnquipArmor(apparel.bodyPart);
+            } else {
+                ArmorManager.Instance.EquipArmor(this);
+            }
         }
     }
 
@@ -109,7 +102,5 @@ public class ItemController : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
     void OnDestroy() {
         goneFromSlot?.Invoke();
-        // parentSlot.OnItemLeft();
-            // PlayerEventManager.Instance.InvokeItemEquipStatusChanged(item, false);
     }
 }

@@ -35,7 +35,11 @@ public class Popup : MonoBehaviour
                 buttonText = "Купить";
                 break;
             case Apparel apparel:
-                buttonText = "Экипировать";
+                if (ArmorManager.Instance.IsEquipped(apparel)) {
+                    buttonText = "Снять";
+                } else {
+                    buttonText = "Экипировать";
+                }
                 statText = "+" + apparel.defense;
                 break;
             default:
